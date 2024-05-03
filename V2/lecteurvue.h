@@ -17,5 +17,9 @@ public:
 
 private:
     Ui::LecteurVue *ui;
+public slots:
+    void Avancer();
+    void reculer();
+    void changerDiaporama();
 };
 #endif // LECTEURVUE_H

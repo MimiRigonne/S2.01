@@ -1,6 +1,6 @@
 #include "lecteurvue.h"
 #include "ui_lecteurvue.h"
-
+#include "QDebug"
 LecteurVue::LecteurVue(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::LecteurVue)
@@ -8,7 +8,7 @@ LecteurVue::LecteurVue(QWidget *parent)
     ui->setupUi(this);
 
     QObject::connect(ui->ButtonAvancer,SIGNAL(clicked()),this,SLOT(Avancer()));
-    QObject::connect(ui->ButtonReculer,SIGNAL(clicked()),this,SLOT(Reculer()));
+    QObject::connect(ui->ButtonReculer,SIGNAL(clicked()),this,SLOT(reculer()));
     QObject::connect(ui->ButtonChangeD,SIGNAL(clicked()),this,SLOT(changerDiaporama()));
 }
 
@@ -18,18 +18,14 @@ LecteurVue::~LecteurVue()
 }
 
 
-void LecteurVue::Avancer()
-{
-    QDebug("L'utilisateur a avancer d'une slide");
+void LecteurVue::Avancer() {
+    qDebug() << "L'utilisateur a avancé d'une diapositive";
 }
 
-void LecteurVue::reculer()
-{
-    QDebug("L'utilisateur a reculer d'une slide");
+void LecteurVue::reculer() {
+    qDebug() << "L'utilisateur a reculé d'une diapositive";
 }
 
-void LecteurVue::changerDiaporama()
-{
-    QDebug("L'utilisateur a changer de diaporama");
-
+void LecteurVue::changerDiaporama() {
+    qDebug() << "L'utilisateur a changé de diaporama";
 }
