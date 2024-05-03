@@ -52,5 +52,6 @@ public:
 
 };
 
+
 #endif // TYPE_DIAPORAMA_H
 
