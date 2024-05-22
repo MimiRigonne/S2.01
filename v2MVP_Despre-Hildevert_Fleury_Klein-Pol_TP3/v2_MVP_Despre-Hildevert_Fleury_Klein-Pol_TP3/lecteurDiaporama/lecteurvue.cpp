@@ -15,12 +15,13 @@ LecteurVue::LecteurVue(QWidget *parent)
     QObject::connect(ui->btnLancerDiapo,SIGNAL(clicked()),this,SLOT(demandeLancerDiapo()));
     QObject::connect(ui->btnArreterDiapo,SIGNAL(clicked()),this,SLOT(demandeArreterDiapo()));
 
-    QObject::connect(ui->actionAProposDe, &QAction::triggered, this, SLOT(demandeAProposDe()));
-    QObject::connect(ui->actionVitesse, &QAction::triggered, this, SLOT(demandeModVitesse()));
-    QObject::connect(ui->actionChargerDiapo, &QAction::triggered, this, SLOT(demandeChargerDiapo()));
-    QObject::connect(ui->actionEnleverDiapo, &QAction::triggered, this, SLOT(demandeEnleverDiapo()));
-    QObject::connect(ui->actionFiltre, &QAction::triggered, this, SLOT(demandeFiltre()));
-    QObject::connect(ui->actionQuitter, &QAction::triggered, this, SLOT(demandeQuitter()));
+
+    QObject::connect(ui->actionAProposDe, SIGNAL(triggered()), this, SLOT(demandeAProposDe()));
+    QObject::connect(ui->actionVitesse, SIGNAL(triggered()), this, SLOT(demandeModVitesse()));
+    QObject::connect(ui->actionChargerDiapo, SIGNAL(triggered()), this, SLOT(demandeChargerDiapo()));
+    QObject::connect(ui->actionEnleverDiapo, SIGNAL(triggered()), this, SLOT(demandeEnleverDiapo()));
+    QObject::connect(ui->actionFiltre, SIGNAL(triggered()), this, SLOT(demandeFiltre()));
+    QObject::connect(ui->actionQuitter, SIGNAL(triggered()), this, SLOT(demandeQuitter()));
 
 }
 
@@ -49,6 +50,10 @@ void LecteurVue::majInterface(Modele::UnEtat e)
     }
 }
 
+void LecteurVue::setPresentation(Presentation *p)
+{
+    laPresentation = p;
+}
 
 void LecteurVue::demandeDiapoSuiv()
 {
@@ -83,19 +88,18 @@ void LecteurVue::demandeEnleverDiapo()
 void LecteurVue::demandeAProposDe()
 {
     laPresentation->demandeAProposDe();
-
 }
 void LecteurVue::demandeQuitter()
 {
     laPresentation->demandeQuitter();
 }
-void Presentation::demandeFiltre()
+
+void LecteurVue::demandeFiltre()
 {
     laPresentation->demandeFiltre();
 }
-void Presentation::demandeAfficher()
+void LecteurVue::demandeAfficher()
 {
     laPresentation->demandeAfficher();
 }
-
 
