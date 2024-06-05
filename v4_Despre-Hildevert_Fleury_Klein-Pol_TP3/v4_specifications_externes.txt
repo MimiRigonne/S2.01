@@ -1,0 +1,21 @@
+Présentation des spécifications externes de la v4
+
+Mode automatique : 
+
+	- Les images défilent automatiquement, à raison de 1 image toutes les 2 secondes. 
+	
+	- Le défilement automatique va uniquement vers l’avant, et démarre toujours à partir de la première image. 
+	
+	- L’affichage automatique ‘boucle’ : après la dernière image, l’application affiche à nouveau la première image.
+	
+	- Le défilement automatique démarre à la première image du diaporama (celle de rang 1 dans le diaporama).
+	
+	- Si l’on est en mode Auto, la relance du diaporama en mode Auto est possible, par clic sur le buton « lancer
+	diaporama ». Le défilement automatique redémarre à la première image.
+	
+	- Si l’on est en mode Auto, l’arrêt du diaporama automatique et le passage en mode Manuel est possible, par
+	clic sur un bouton « arrêter diaporama », ou bien sur un des 2 boutons-flèches « suivant » / « précédent ». Le
+	défilement automatique s’arrête, l’image qui était en cours d’affichage au moment du passage en mode
+	Manuel reste affichée, quand on clique sur " arrêter diaporama " (et non sur " suivant " et " précédent " ), jusqu’à ce que l’utilisateur décide d’interagir à nouveau avec l’application.
+	
+	- Si l’on est en mode Manuel, le bouton « arrêter diaporama » est inactif.

@@ -1,0 +1,17 @@
+Présentation des spécifications externes de la v3
+
+Affichage des images dans l'interface graphique
+1. Chargement du diaporama "test" :
+   - L'utilisateur doit se rendre dans le menu `Fichier` puis sélectionner l'option `Charger un diaporama`.
+   - Cette action va charger un diaporama intitulé « test » avec 3 images dans l'interface graphique.
+
+2. Suppression du diaporama :
+   - Pour quitter le lecteur ou pour vider le contenu affiché, il est nécessaire de supprimer le diaporama en cours.
+   - Nous avons donc implémenté l'option `Enlever Diaporama` pour permettre aux utilisateurs de retirer le diaporama actuel de l'interface pour quitter le lecteur.
+
+Quitter : 
+   - Comme préciser dans la description de la sae, on ne peut quitter si le lecteur est vide.
+   - On peut quitter grâce à "Fichier -> Quitter" ou au raccourci "Ctrl+Q"
+
+A propos de : 
+Affiche une fenêtre de dialogue grâce à "Aide -> A propos ..." de au raccourci "Ctrl+A"

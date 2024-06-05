@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images_Diapo">
+        <file>cartesDisney/Disney_1.gif</file>
+    </qresource>
+</RCC>
