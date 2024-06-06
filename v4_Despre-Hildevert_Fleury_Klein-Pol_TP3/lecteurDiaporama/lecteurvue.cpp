@@ -14,16 +14,19 @@ LecteurVue::LecteurVue(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::LecteurVue)
 {
+    //Instances
     dlg=new AProposDe(this);
-
     lecteur = new Lecteur();
-
     timer = new QTimer();
 
     ui->setupUi(this);
 
+    //Mode Manuel
     ui->labelModeLect->setText("Mode Manuel");
 
+    ui->labelImage->setText("Pas de diaporama chargé");
+
+    //Désactiver les labels sauf charger
     ui->actionEnleverDiapo->setDisabled(true);
     ui->actionFiltre->setDisabled(true);
     ui->actionQuitter->setDisabled(true);
@@ -32,10 +35,28 @@ LecteurVue::LecteurVue(QWidget *parent)
     ui->btnLancerDiapo->setDisabled(true);
     ui->actionVitesse->setDisabled(true);
 
-    // Arreter mode auto et suivre les clics des boutons
+    //Cacher les labels
+    ui->labelSur->hide();
+    ui->labelCat->hide();
+    ui->labelCatImg->hide();
+    ui->labelImage->hide();
+    ui->labelModeLect->hide();
+    ui->labelImage->hide();
+    ui->labelNbImg->hide();
+    ui->labelRangImg->hide();
+    ui->labelTitre->hide();
+    ui->labelTitreDiapo->hide();
+    ui->labelTitreImg->hide();
+
+
+    // Arreter mode auto
     QObject::connect(ui->btnSuivant, &QPushButton::clicked, this, &LecteurVue::arreterDiapo);
     QObject::connect(ui->btnPrecedent, &QPushButton::clicked, this, &LecteurVue::arreterDiapo);
 
+    // Connecter le signal timeout() de QTimer à suivant
+    connect(timer, &QTimer::timeout, this, &LecteurVue::suivantAuto);
+
+    // Autres connexions
     QObject::connect(ui->btnSuivant, &QPushButton::clicked, this, &LecteurVue::btnSuivantClique);
 
     QObject::connect(ui->btnSuivant, &QPushButton::clicked, this, &LecteurVue::suivant);
@@ -50,11 +71,14 @@ LecteurVue::LecteurVue(QWidget *parent)
     QObject::connect(ui->actionEnleverDiapo, &QAction::triggered, this, &LecteurVue::enleverDiapo);
     QObject::connect(ui->actionFiltre, &QAction::triggered, this, &LecteurVue::filtre);
 
+    //Quitter
     QObject::connect(ui->actionQuitter, &QAction::triggered, this, &LecteurVue::quitter);
 
+    //QObject::connect(m_btnQuitter, SIGNAL(clicked()), QCoreApplication::instance(), SLOT(quit()));
     quitShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_Q), this);
     QObject::connect(quitShortcut, &QShortcut::activated, this, &LecteurVue::quitter);
 
+    //AProposDe
     AProposShortcut = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_A), this);
     QObject::connect(AProposShortcut, &QShortcut::activated, this, &LecteurVue::aProposDe);
 }
@@ -71,30 +95,26 @@ void LecteurVue::btnSuivantClique()
 
 void LecteurVue::suivant()
 {
-    if (diapoAutoEnCours && btnSuivClique)
+    if (diapoAutoEnCours)
     {
-        btnSuivClique = false; // Réinitialiser l'indicateur du bouton cliqué
         arreterDiapo();
         return;
     }
 
     lecteur->avancer();
     changerLabelsImg();
+}
 
+void LecteurVue::suivantAuto()
+{
+    lecteur->avancer();
+    changerLabelsImg();
 
-    qDebug() << "L'utilisateur a avancé d'une diapositive";
 }
 
 void LecteurVue::changerLabelsImg()
 //Changer les labels sur l'image
 {
-    //Cacher
-    ui->labelImage->hide();
-    ui->labelTitreImg->hide();
-    ui->labelRangImg->hide();
-    ui->labelCatImg->hide();
-
-    //Changer
     QString chemin = QString::fromStdString(lecteur->getImageCourante()->getChemin());
     ui->labelImage->setPixmap(QPixmap(chemin));
 
@@ -105,12 +125,6 @@ void LecteurVue::changerLabelsImg()
     ui->labelRangImg->setText(QString::number(rang));
 
     ui->labelCatImg->setText(QString::fromStdString(lecteur->getImageCourante()->getCategorie()));
-
-    //Afficher
-    ui->labelImage->show();
-    ui->labelTitreImg->show();
-    ui->labelRangImg->show();
-    ui->labelCatImg->show();
 }
 
 void LecteurVue::precedent()
@@ -125,7 +139,6 @@ void LecteurVue::precedent()
 
     changerLabelsImg();
 
-    qDebug() << "L'utilisateur a reculé d'une diapositive";
 }
 
 void LecteurVue::lancerDiapo()
@@ -136,39 +149,30 @@ void LecteurVue::lancerDiapo()
     ui->labelModeLect->setText("Mode Automatique");
     ui->labelModeLect->show();
 
-    ui->labelImage->hide();
-
-    // Commencer à la première image
-    unsigned int idDiapo = lecteur->getIdDiaporama();
-    lecteur->viderLecteur();
-    lecteur->changerDiaporama(idDiapo);
-
-    qDebug() << "L'utilisateur a lancé le diaporama en mode automatique";
-
-    // Connecter le signal timeout() de QTimer à suivant
-    connect(timer, &QTimer::timeout, this, &LecteurVue::suivant);
+    // Afficher la première image
+    Diaporama* diapoCourant = lecteur->getDiaporama();
+    lecteur->setPosImageCourante(diapoCourant->nbImages()-1); //dernière image
+    lecteur->avancer();
+    changerLabelsImg();
 
     // Démarrer le timer pour déclencher la fonction suivant() toutes les 2 secondes
     timer->start(2000);
 
     // Marquer que le diaporama automatique est en cours
     diapoAutoEnCours = true;
+
 }
 
 void LecteurVue::arreterDiapo()
 {
     if (diapoAutoEnCours)
     {
-        ui->labelModeLect->hide();
-        ui->labelModeLect->setText("Mode Manuel");
-        ui->labelModeLect->show();
-
-        ui->btnArreterDiapo->setEnabled(false);
-
-        qDebug() << "L'utilisateur a arrêté le mode automatique.";
-
         // Arrêter le timer
         timer->stop();
+
+        ui->labelModeLect->setText("Mode Manuel");
+
+        ui->btnArreterDiapo->setEnabled(false);
 
         diapoAutoEnCours = false;
     }
@@ -176,18 +180,36 @@ void LecteurVue::arreterDiapo()
 
 void LecteurVue::chargerDiapo()
 {
-    ui->labelTitreDiapo->hide();
 
     lecteur->changerDiaporama(1, "test");
 
     Diaporama* diapoCourant = lecteur->getDiaporama();
 
-    qDebug() << "L'utilisateur a chargé un diaporama";
-
     QString titre = QString::fromStdString(diapoCourant->getTitre());
 
-    ui->labelTitreDiapo->setText(titre);
+    ui->labelTitreDiapo->setText(titre); //Titre diapo
 
+    ui->labelNbImg->setText(QString::number(diapoCourant->nbImages())); //nb images du diapo
+
+    //Montrer les labels
+    ui->labelSur->show();
+    ui->labelCat->show();
+    ui->labelCatImg->show();
+    ui->labelImage->show();
+    ui->labelModeLect->show();
+    ui->labelImage->show();
+    ui->labelNbImg->show();
+    ui->labelRangImg->show();
+    ui->labelTitre->show();
+    ui->labelTitreDiapo->show();
+    ui->labelTitreImg->show();
+
+
+    // Commencer à la première image
+    lecteur->setPosImageCourante(0);
+    changerLabelsImg();
+
+    //activer boutons et labels
     ui->actionEnleverDiapo->setEnabled(true);
     ui->actionFiltre->setEnabled(true);
     ui->actionQuitter->setEnabled(true);
@@ -195,17 +217,19 @@ void LecteurVue::chargerDiapo()
     ui->btnSuivant->setEnabled(true);
     ui->btnLancerDiapo->setEnabled(true);
     ui->actionVitesse->setEnabled(true);
+
 }
 
 void LecteurVue::quitter()
 {
-    qDebug() << "L'utilisateur a quitté le lecteur";
-
-    if (lecteur->lecteurVide()) {
-        QCoreApplication::instance()->quit();
-    } else {
-        qDebug() << "Erreur: Impossible de quitter car le lecteur n'est pas vide.";
+    //vider le lecteur s'il ne l'est pas déjà
+    if(!lecteur->lecteurVide())
+    {
+        enleverDiapo();
     }
+
+    QCoreApplication::instance()->quit();
+
 }
 
 void LecteurVue::modifierVitesse()
@@ -226,7 +250,19 @@ void LecteurVue::aProposDe()
 void LecteurVue::enleverDiapo()
 {
     lecteur->viderLecteur();
+    ui->labelImage->setText("Pas de diaporama chargé");
+
+    //Cacher les labels
+    ui->labelSur->hide();
+    ui->labelCat->hide();
+    ui->labelCatImg->hide();
     ui->labelImage->hide();
-    ui->labelImage->setText("");
-    qDebug() << "L'utilisateur a enlevé le diaporama";
+    ui->labelModeLect->hide();
+    ui->labelImage->hide();
+    ui->labelNbImg->hide();
+    ui->labelRangImg->hide();
+    ui->labelTitre->hide();
+    ui->labelTitreDiapo->hide();
+    ui->labelTitreImg->hide();
+
 }

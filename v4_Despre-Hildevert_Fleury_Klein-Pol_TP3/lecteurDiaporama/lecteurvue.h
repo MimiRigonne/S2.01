@@ -35,6 +35,7 @@ private:
     QTimer* timer;
     bool diapoAutoEnCours = false; // Indique si le lecteur est en mode auto
     bool btnSuivClique=false; //Indique si on à appuyer sur btnSuivant
+    unsigned int tpsPasse; //Indique le temps d'affichage passé en mode auto
 
 public slots:
     void suivant();
@@ -49,6 +50,7 @@ public slots:
     void filtre();
     void btnSuivantClique(); // Indique que le bouton Suivant a été cliqué en Mode Auto
     void changerLabelsImg();
+    void suivantAuto();
 
 };
 #endif // LECTEURVUE_H

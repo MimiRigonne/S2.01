@@ -68,7 +68,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Version : v3 du lecteur de diaporama</string>
+        <string>Version : v4 du lecteur de diaporama</string>
        </property>
       </widget>
      </item>
@@ -88,7 +88,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Date de création : jj/mm/aaaa</string>
+        <string>Date de création : 06/06/2024 </string>
        </property>
       </widget>
      </item>

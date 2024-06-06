@@ -125,6 +125,13 @@
          </spacer>
         </item>
         <item>
+         <widget class="QLabel" name="labelTitre">
+          <property name="text">
+           <string>Titre : </string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QLabel" name="labelTitreDiapo">
           <property name="text">
            <string>Titre diaporama</string>
@@ -172,6 +179,20 @@
          </widget>
         </item>
         <item>
+         <widget class="QLabel" name="labelSur">
+          <property name="text">
+           <string>sur</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelNbImg">
+          <property name="text">
+           <string>Nb images</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer_10">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -183,6 +204,13 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="labelCat">
+          <property name="text">
+           <string>Catégorie : </string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QLabel" name="labelCatImg">
@@ -293,9 +321,9 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="btnSuivant">
+         <widget class="QPushButton" name="btnPrecedent">
           <property name="text">
-           <string>Suivant</string>
+           <string>Précédent</string>
           </property>
          </widget>
         </item>
@@ -316,9 +344,9 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="btnPrecedent">
+         <widget class="QPushButton" name="btnSuivant">
           <property name="text">
-           <string>Précédent</string>
+           <string>Suivant</string>
           </property>
          </widget>
         </item>
