@@ -48,6 +48,7 @@ public slots:
     void quitter();
     void filtre();
     void btnSuivantClique(); // Indique que le bouton Suivant a été cliqué en Mode Auto
+    void changerLabelsImg();
 
 };
 #endif // LECTEURVUE_H

@@ -4,6 +4,8 @@
 #include <QCoreApplication>
 #include "aproposde.h"
 
+#include <QString>
+
 #include "lecteur.h"
 #include "imagedansdiaporama.h"
 #include "diaporama.h"
@@ -19,6 +21,16 @@ LecteurVue::LecteurVue(QWidget *parent)
     timer = new QTimer();
 
     ui->setupUi(this);
+
+    ui->labelModeLect->setText("Mode Manuel");
+
+    ui->actionEnleverDiapo->setDisabled(true);
+    ui->actionFiltre->setDisabled(true);
+    ui->actionQuitter->setDisabled(true);
+    ui->btnPrecedent->setDisabled(true);
+    ui->btnSuivant->setDisabled(true);
+    ui->btnLancerDiapo->setDisabled(true);
+    ui->actionVitesse->setDisabled(true);
 
     // Arreter mode auto et suivre les clics des boutons
     QObject::connect(ui->btnSuivant, &QPushButton::clicked, this, &LecteurVue::arreterDiapo);
@@ -61,20 +73,44 @@ void LecteurVue::suivant()
 {
     if (diapoAutoEnCours && btnSuivClique)
     {
-        arreterDiapo();
         btnSuivClique = false; // Réinitialiser l'indicateur du bouton cliqué
+        arreterDiapo();
         return;
     }
-    ui->labelImage->hide();
 
     lecteur->avancer();
+    changerLabelsImg();
 
+
+    qDebug() << "L'utilisateur a avancé d'une diapositive";
+}
+
+void LecteurVue::changerLabelsImg()
+//Changer les labels sur l'image
+{
+    //Cacher
+    ui->labelImage->hide();
+    ui->labelTitreImg->hide();
+    ui->labelRangImg->hide();
+    ui->labelCatImg->hide();
+
+    //Changer
     QString chemin = QString::fromStdString(lecteur->getImageCourante()->getChemin());
-
     ui->labelImage->setPixmap(QPixmap(chemin));
 
+
+    ui->labelTitreImg->setText(QString::fromStdString(lecteur->getImageCourante()->getTitre()));
+
+    int rang = lecteur->getImageCourante()->getRangDansDiaporama();
+    ui->labelRangImg->setText(QString::number(rang));
+
+    ui->labelCatImg->setText(QString::fromStdString(lecteur->getImageCourante()->getCategorie()));
+
+    //Afficher
     ui->labelImage->show();
-    qDebug() << "L'utilisateur a avancé d'une diapositive";
+    ui->labelTitreImg->show();
+    ui->labelRangImg->show();
+    ui->labelCatImg->show();
 }
 
 void LecteurVue::precedent()
@@ -85,21 +121,20 @@ void LecteurVue::precedent()
         return;
     }
 
-    ui->labelImage->hide();
-
     lecteur->reculer();
 
-    QString chemin = QString::fromStdString(lecteur->getImageCourante()->getChemin());
+    changerLabelsImg();
 
-    ui->labelImage->setPixmap(QPixmap(chemin));
-
-    ui->labelImage->show();
     qDebug() << "L'utilisateur a reculé d'une diapositive";
 }
 
 void LecteurVue::lancerDiapo()
 {
     ui->btnArreterDiapo->setEnabled(true);
+
+    ui->labelModeLect->hide();
+    ui->labelModeLect->setText("Mode Automatique");
+    ui->labelModeLect->show();
 
     ui->labelImage->hide();
 
@@ -124,6 +159,10 @@ void LecteurVue::arreterDiapo()
 {
     if (diapoAutoEnCours)
     {
+        ui->labelModeLect->hide();
+        ui->labelModeLect->setText("Mode Manuel");
+        ui->labelModeLect->show();
+
         ui->btnArreterDiapo->setEnabled(false);
 
         qDebug() << "L'utilisateur a arrêté le mode automatique.";
@@ -137,8 +176,25 @@ void LecteurVue::arreterDiapo()
 
 void LecteurVue::chargerDiapo()
 {
+    ui->labelTitreDiapo->hide();
+
     lecteur->changerDiaporama(1, "test");
+
+    Diaporama* diapoCourant = lecteur->getDiaporama();
+
     qDebug() << "L'utilisateur a chargé un diaporama";
+
+    QString titre = QString::fromStdString(diapoCourant->getTitre());
+
+    ui->labelTitreDiapo->setText(titre);
+
+    ui->actionEnleverDiapo->setEnabled(true);
+    ui->actionFiltre->setEnabled(true);
+    ui->actionQuitter->setEnabled(true);
+    ui->btnPrecedent->setEnabled(true);
+    ui->btnSuivant->setEnabled(true);
+    ui->btnLancerDiapo->setEnabled(true);
+    ui->actionVitesse->setEnabled(true);
 }
 
 void LecteurVue::quitter()
