@@ -42,6 +42,7 @@ public slots:
     void aProposDe();
     void quitter();
     void filtre();
+	void changerLabelsImg();
 
 };
 #endif // LECTEURVUE_H

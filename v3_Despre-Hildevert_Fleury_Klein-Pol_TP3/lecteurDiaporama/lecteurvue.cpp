@@ -13,7 +13,34 @@ LecteurVue::LecteurVue(QWidget *parent)
     , ui(new Ui::LecteurVue)
 {
     ui->setupUi(this);
+	
+	//Mode Manuel
+    ui->labelModeLect->setText("Mode Manuel");
 
+    ui->labelImage->setText("Pas de diaporama chargé");
+
+    //Désactiver les labels sauf charger
+    ui->actionEnleverDiapo->setDisabled(true);
+    ui->actionFiltre->setDisabled(true);
+    ui->actionQuitter->setDisabled(true);
+    ui->btnPrecedent->setDisabled(true);
+    ui->btnSuivant->setDisabled(true);
+    ui->btnLancerDiapo->setDisabled(true);
+    ui->actionVitesse->setDisabled(true);
+
+    //Cacher les labels
+    ui->labelSur->hide();
+    ui->labelCat->hide();
+    ui->labelCatImg->hide();
+    ui->labelImage->hide();
+    ui->labelModeLect->hide();
+    ui->labelImage->hide();
+    ui->labelNbImg->hide();
+    ui->labelRangImg->hide();
+    ui->labelTitre->hide();
+    ui->labelTitreDiapo->hide();
+    ui->labelTitreImg->hide();
+	
     QObject::connect(ui->btnSuivant,SIGNAL(clicked()),this,SLOT(suivant()));
     QObject::connect(ui->btnPrecedent,SIGNAL(clicked()),this,SLOT(precedent()));
     QObject::connect(ui->btnLancerDiapo,SIGNAL(clicked()),this,SLOT(lancerDiapo()));
@@ -46,32 +73,41 @@ LecteurVue::~LecteurVue()
 
 void LecteurVue::suivant() {
 
-    ui->labelImage->hide();
-
     lecteur->avancer();
 
     QString chemin = QString::fromStdString(lecteur->getImageCourante()->getChemin());
 
     ui->labelImage->setPixmap(QPixmap(chemin));
+	changerLabelsImg();
 
-    ui->labelImage->show();
-    qDebug() << "L'utilisateur a avancé d'une diapositive";
 }
 
 void LecteurVue::precedent() {
-
-    ui->labelImage->hide();
 
     lecteur->reculer();
 
     QString chemin = QString::fromStdString(lecteur->getImageCourante()->getChemin());
 
     ui->labelImage->setPixmap(QPixmap(chemin));
+	changerLabelsImg();
 
-    ui->labelImage->show();
-    qDebug() << "L'utilisateur a reculé d'une diapositive";
 }
 
+
+void LecteurVue::changerLabelsImg()
+//Changer les labels sur l'image
+{
+    QString chemin = QString::fromStdString(lecteur->getImageCourante()->getChemin());
+    ui->labelImage->setPixmap(QPixmap(chemin));
+
+
+    ui->labelTitreImg->setText(QString::fromStdString(lecteur->getImageCourante()->getTitre()));
+
+    int rang = lecteur->getImageCourante()->getRangDansDiaporama();
+    ui->labelRangImg->setText(QString::number(rang));
+
+    ui->labelCatImg->setText(QString::fromStdString(lecteur->getImageCourante()->getCategorie()));
+}
 
 void LecteurVue::lancerDiapo()
 {
@@ -88,19 +124,49 @@ void LecteurVue::arreterDiapo()
 void LecteurVue::chargerDiapo()
 {
     lecteur->changerDiaporama(1, "test");
-    qDebug() << "L'utilisateur a chargé un diaporama";
+	
+	Diaporama* diapoCourant = lecteur->getDiaporama();
+    QString titre = QString::fromStdString(diapoCourant->getTitre());
+    ui->labelTitreDiapo->setText(titre); //Titre diapo
+	
+    //Montrer les labels
+    ui->labelSur->show();
+    ui->labelCat->show();
+    ui->labelCatImg->show();
+    ui->labelImage->show();
+    ui->labelModeLect->show();
+    ui->labelImage->show();
+    ui->labelNbImg->show();
+    ui->labelRangImg->show();
+    ui->labelTitre->show();
+    ui->labelTitreDiapo->show();
+    ui->labelTitreImg->show();
+
+
+    // Commencer à la première image
+    lecteur->setPosImageCourante(0);
+    changerLabelsImg();
+	
+	//activer boutons et labels
+    ui->actionEnleverDiapo->setEnabled(true);
+    ui->actionFiltre->setEnabled(true);
+    ui->actionQuitter->setEnabled(true);
+    ui->btnPrecedent->setEnabled(true);
+    ui->btnSuivant->setEnabled(true);
+    ui->btnLancerDiapo->setEnabled(true);
+    ui->actionVitesse->setEnabled(true);
 
 }
 
 void LecteurVue::quitter()
 {
-    qDebug() << "L'utilisateur a quitté le lecteur";
-
-    if (lecteur->lecteurVide()) {
-        QCoreApplication::instance()->quit();
-    } else {
-        qDebug() << "Erreur: Impossible de quitter car le lecteur n'est pas vide.";
+    //vider le lecteur s'il ne l'est pas déjà
+    if(!lecteur->lecteurVide())
+    {
+        enleverDiapo();
     }
+
+    QCoreApplication::instance()->quit();
 }
 
 void LecteurVue::modifierVitesse()
@@ -118,7 +184,6 @@ void LecteurVue::filtre()
 
 void LecteurVue::aProposDe()
 {
-
     dlg->show();
 }
 
@@ -127,8 +192,16 @@ void LecteurVue::enleverDiapo()
 {
     lecteur->viderLecteur();
     ui->labelImage->hide();
-    ui->labelImage->setText("");
-    qDebug() << "L'utilisateur a enlevé le diaporama";
+    ui->labelImage->setText("Pas de diaporama chargé");
+	
+	//Désactiver les labels sauf charger
+    ui->actionEnleverDiapo->setDisabled(true);
+    ui->actionFiltre->setDisabled(true);
+    ui->actionQuitter->setDisabled(true);
+    ui->btnPrecedent->setDisabled(true);
+    ui->btnSuivant->setDisabled(true);
+    ui->btnLancerDiapo->setDisabled(true);
+    ui->actionVitesse->setDisabled(true);
 
 }
 
